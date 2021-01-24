@@ -11,11 +11,9 @@ module Fastlane
 
         altool_app_type = params[:altool_app_type]
         altool_ipa_path = "\"#{params[:altool_ipa_path]}\""
-        altool_username = params[:altool_username]
         altool_output_format = params[:altool_output_format]
-
-        ENV["ALTOOL_PASSWORD"] = params[:altool_password]
-        altool_password = "@env:ALTOOL_PASSWORD"
+        altool_api_key = params[:altool_api_key]
+        altool_api_issuer = params[:altool_api_issuer]
 
         UI.message("========Validating and Uploading your ipa file to iTunes Connect=========")
         command = [
@@ -25,10 +23,10 @@ module Fastlane
           altool_app_type,
           '-f',
           altool_ipa_path,
-          '-u',
-          altool_username,
-          '-p',
-          altool_password,
+          '--apiKey',
+          altool_api_key,
+          '--apiIssuer',
+          altool_api_issuer,
           '--output-format',
           altool_output_format
         ]
@@ -74,19 +72,21 @@ module Fastlane
                                       UI.user_error!("'#{value}' doesn't seem to be an ipa file") unless value.end_with?(".ipa")
                                     end),
 
-          FastlaneCore::ConfigItem.new(key: :altool_username,
-                                    env_name: "ALTOOL_USERNAME",
-                                    description: "Your Apple ID for iTunes Connects. This usually FASTLANE_USER environmental variable",
+          FastlaneCore::ConfigItem.new(key: :altool_api_key,
+                                    env_name: "ALTOOL_API_KEY",
+                                    description: "AppStore API Key. This option will search the following directories in sequence for a private key file
+                                    with the name of 'AuthKey_<api_key>.p8':  './private_keys', '~/private_keys', '~/.private_keys',
+                                    and '~/.appstoreconnect/private_keys'",
                                     is_string: true,
-                                    default_value: ENV["FASTLANE_USER"],
+                                    default_value: ENV["ALTOOL_API_KEY"],
                                     optional: false,
                                     ),
 
-          FastlaneCore::ConfigItem.new(key: :altool_password,
-                                    env_name: "ALTOOL_PASSWORD",
-                                    description: "Your Apple ID Password for iTunes Connects. This usually FASTLANE_PASSWORD environmental variable",
+          FastlaneCore::ConfigItem.new(key: :altool_api_issuer,
+                                    env_name: "ALTOOL_API_ISSUER",
+                                    description: "AppStore API Issuer ID.",
                                     is_string: true,
-                                    default_value: ENV["FASTLANE_PASSWORD"],
+                                    default_value: ENV["ALTOOL_API_ISSUER"],
                                     optional: true,
                                     ),
 
@@ -102,8 +102,8 @@ module Fastlane
 
       def self.example_code
         ['   altool(
-            altool_username: ENV["FASTLANE_USER"],
-            altool_password: ENV["FASTLANE_PASSWORD"],
+            altool_api_key: ENV["ALTOOL_API_KEY"],
+            altool_api_issuer: ENV["ALTOOL_API_ISSUER"],
             altool_app_type: "ios",
             altool_ipa_path: "./build/Your-ipa.ipa",
             altool_output_format: "xml",
