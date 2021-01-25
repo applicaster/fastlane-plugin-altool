@@ -12,8 +12,8 @@ module Fastlane
         altool_app_type = params[:altool_app_type]
         altool_ipa_path = "\"#{params[:altool_ipa_path]}\""
         altool_output_format = params[:altool_output_format]
-        altool_api_key = params[:altool_api_key]
-        altool_api_issuer = params[:altool_api_issuer]
+        altool_api_key_id = params[:altool_api_key_id]
+        altool_api_issuer_id = params[:altool_api_issuer_id]
 
         UI.message("========Validating and Uploading your ipa file to iTunes Connect=========")
         command = [
@@ -24,9 +24,9 @@ module Fastlane
           '-f',
           altool_ipa_path,
           '--apiKey',
-          altool_api_key,
+          altool_api_key_id,
           '--apiIssuer',
-          altool_api_issuer,
+          altool_api_issuer_id,
           '--output-format',
           altool_output_format
         ]
@@ -72,21 +72,21 @@ module Fastlane
                                       UI.user_error!("'#{value}' doesn't seem to be an ipa file") unless value.end_with?(".ipa")
                                     end),
 
-          FastlaneCore::ConfigItem.new(key: :altool_api_key,
-                                    env_name: "ALTOOL_API_KEY",
+          FastlaneCore::ConfigItem.new(key: :altool_api_key_id,
+                                    env_name: "altool_api_key_id",
                                     description: "AppStore API Key. This option will search the following directories in sequence for a private key file
                                     with the name of 'AuthKey_<api_key>.p8':  './private_keys', '~/private_keys', '~/.private_keys',
-                                    and '~/.appstoreconnect/private_keys'",
+                                    and '~/.appstoreconnect/private_keys' ",
                                     is_string: true,
-                                    default_value: ENV["ALTOOL_API_KEY"],
+                                    default_value: ENV["ALTOOL_API_KEY_ID"],
                                     optional: false,
                                     ),
 
-          FastlaneCore::ConfigItem.new(key: :altool_api_issuer,
-                                    env_name: "ALTOOL_API_ISSUER",
-                                    description: "AppStore API Issuer ID.",
+          FastlaneCore::ConfigItem.new(key: :altool_api_issuer_id,
+                                    env_name: "altool_api_issuer_id",
+                                    description: "AppStore API Issuer ID ",
                                     is_string: true,
-                                    default_value: ENV["ALTOOL_API_ISSUER"],
+                                    default_value: ENV["ALTOOL_API_ISSUER_ID"],
                                     optional: true,
                                     ),
 
@@ -102,8 +102,8 @@ module Fastlane
 
       def self.example_code
         ['   altool(
-            altool_api_key: ENV["ALTOOL_API_KEY"],
-            altool_api_issuer: ENV["ALTOOL_API_ISSUER"],
+            altool_api_key_id: ENV["ALTOOL_API_KEY_ID"],
+            altool_api_issuer_id: ENV["ALTOOL_API_ISSUER_ID"],
             altool_app_type: "ios",
             altool_ipa_path: "./build/Your-ipa.ipa",
             altool_output_format: "xml",
